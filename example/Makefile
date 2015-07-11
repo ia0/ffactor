@@ -1,3 +1,5 @@
+# HOWTO: see ../mk/common.mk
+
 FF_B := build
 FF_E := env
 FF_S := src

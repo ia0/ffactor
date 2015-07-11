@@ -16,10 +16,10 @@
 alias l=ls
 alias ll='ls -l'
 
-#@- if emacs
+#@if emacs
 alias edit=emacs
-#@- elif vim
+#@elif vim
 alias edit=vim
-#@- else
+#@else
 alias edit=vi
-#@- endif
+#@endif

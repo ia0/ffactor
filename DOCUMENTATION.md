@@ -5,13 +5,13 @@ Grammar
 -------
 
 ```
-BEGIN MAGIC
-  file ::= header content(CONTENT)
-  header ::= PRE=.+ "ffactor" SUF=.+ PRE options SUF
-  options ::= ""
-  CMD(x) ::= .* PRE " "* x SUF
-  KEY ::= [A-Za-z][A-Za-z0-9/_-]*
-END MAGIC
+file ::= header content(CONTENT)
+
+header ::= PRE=.+ "ffactor" SUF=.+ PRE options SUF
+
+options ::= ""
+
+CMD(x) ::= .* PRE " "* x SUF
 
 content(a) ::=
 { a : CONTENT ELSE ENDIF }
@@ -41,6 +41,8 @@ op(a) ::=
 | " " cond op(a)
 { a : NOT AND OR }
 | ")"
+
+KEY ::= [A-Za-z][A-Za-z0-9/_-]*
 ```
 
 Implementation
