@@ -1,0 +1,25 @@
+<ffactor><><- Trick to make the first line less dumb.
+>First line.
+Second <if true>line<endif>.
+Third line.
+<- Now, let's do some stuff>
+<if false>BAD
+<elif 0>BAD
+<elif (or 0 0 (and 1 (not 1)) (not 1) 0)>BAD
+<else>OK<endif>
+<if 0>1
+  <if 0>2
+    <if 0>3
+    <endif>4
+  <else>5
+  <endif>6
+  <if 0>7<if 0>8<if 0>9<endif>10<endif>11<endif>12
+<else>13
+  <if 1>14
+    <if 1>15
+    <else>16
+      <if 1>17<endif>18
+    <endif>19
+  <else>20
+  <endif>21
+<endif>22

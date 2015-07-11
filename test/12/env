@@ -1,0 +1,14 @@
+- We use comments to "not set" values
+
+set true
+- set false
+
+- Let's do some checks
+
+if (not true)
+error true is false...
+elif false
+error false is true...
+else
+- All is fine.
+endif

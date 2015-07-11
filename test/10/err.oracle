@@ -1,0 +1,3 @@
+ffactor: Unrecognized command 'foo'
+ffactor: <stdin>:5:0
+ffactor: <stdout>:2:1

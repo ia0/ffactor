@@ -1,0 +1,55 @@
+- Lines starting with a dash and a space are ignored.
+- Empty lines are ignored too.
+
+- You may set a key using the 'set' command:
+set vim
+
+if vim
+- We enter this branch since 'vim' is set.
+else
+- This branch is skipped.
+endif
+
+- Here is the general structure of branching commands:
+- if <c-0>
+- [... executed if <c-0> is true ...]
+- elif <c-1>
+- [... executed if <c-0> was false and <c-1> is true ...]
+- elif <c-2>
+- [...]
+- elif <c-N>
+- [...]
+- else
+- [... executed if <c-0> through <c-N> were false ...]
+- endif
+
+if emacs
+- We skip this branch since 'emacs' is not set.
+elif vim
+- We enter this branch since 'emacs' is not set and 'vim' is.
+else
+- We skip this branch since one previous branch was taken.
+endif
+
+- Here are possible conditions to be used in branching commands:
+- 0 is false
+- 1 is true
+- (not <c>) is true iff <c> is false
+- (and <c-0> [...] <c-N>) is true iff <c-0> through <c-N> are true
+- (or <c-0> [...] <c-N>) is false iff <c-0> through <c-N> are false
+- <key> is true iff <key> is set
+
+if (and emacs vim)
+- We skip this branch.
+elif (or emacs vim)
+- We enter this branch.
+endif
+
+if (not emacs)
+- We enter this branch.
+endif
+
+- You may use the 'error' command to ensure that some condition holds.
+if (not (or emacs vim))
+error At least one editor should be set.
+endif

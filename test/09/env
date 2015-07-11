@@ -1,0 +1,11 @@
+set true
+
+- Write assert
+- Using if and error
+if (not true)
+error WTF 1
+endif
+
+if (not false)
+error WTF 2
+endif

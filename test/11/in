@@ -1,0 +1,4 @@
+#ffactor
+#
+foo#if true
+bar#endif

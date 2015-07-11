@@ -1,0 +1,10 @@
+set true
+
+- Just simulate some asserts
+if (not (and true 1 true 1 1))
+error WTF 1
+endif
+
+if (not (or false 0 1 0))
+error WTF 2
+endif
