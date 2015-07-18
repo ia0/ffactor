@@ -20,7 +20,7 @@ CONFIG := .config
 
 ifneq ($(shell [ -e "$(CONFIG)" ] && echo y),y)
 $(eval $(shell mkdir -p $(dir $(CONFIG)) && \
-B=$(B) C=$(C) D=$(D) E=$(E) O=$(O) V=$(V) script/config > $(CONFIG) || \
+B=$(B) C=$(C) E=$(E) O=$(O) V=$(V) script/config > $(CONFIG) || \
 echo '$$(error Could not make config)'))
 endif
 
@@ -34,10 +34,6 @@ CC += -Weverything
 endif
 ifeq ($(C),gcc)
 CC += -std=c11 -D_BSD_SOURCE -Wall -Wextra
-endif
-
-ifneq ($(D),0)
-CC += -DDEBUG=$(D)
 endif
 
 ifeq ($(E),y)
@@ -87,10 +83,8 @@ $(OBJS): $(B)/%.o: src/%.c
 	$(DO)mkdir -p $(dir $@)
 	$(DO)$(CC) $(DEFINES) -Iinclude -MMD -c $< -o $@
 
-ifeq ($(D),0)
 TESTS := $(shell find test -mindepth 1 -maxdepth 1 -type d)
 TESTS := $(patsubst %,$(B)/%/ok,$(TESTS))
-endif
 DIFF := git diff --no-index --
 
 .PHONY: test

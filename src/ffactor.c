@@ -20,7 +20,6 @@
 #include <stdio.h> /* printf */
 #include <err.h> /* warn, warnx */
 
-#include <ff_debug.h>
 #ifdef FF_VALGRIND
 # include <ff_valgrind.h>
 #endif
@@ -37,7 +36,6 @@ main(int argc, char *argv[])
 		warn("Could not bootstrap under valgrind");
 		return 1;
 	}
-	debug(1, "Bootstraped.\n");
 #endif
 
 	if (argc == 2 && !strcmp("--help", argv[1])) {

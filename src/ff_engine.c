@@ -21,7 +21,6 @@
 #include <string.h> /* memcmp, memset, strdup, strncmp */
 #include <err.h> /* warn, warnx */
 
-#include <ff_debug.h>
 #include <ff_chunk.h>
 #include <ff_keyset.h>
 #include <ff_file.h>
@@ -66,8 +65,6 @@ kmp_table(
 {
 	const char *const d = chunk->data;
 
-	debug(2, "kmp_table()\n");
-
 	assert(chunk->len);
 	*kmp = malloc(chunk->len * sizeof(**kmp));
 	if (!*kmp) {
@@ -80,7 +77,6 @@ kmp_table(
 		while (j > 0 && memcmp(d, &d[i - j], j))
 			j--;
 		(*kmp)[i] = j;
-		debug(3, "kmp_table: [%zu] = %zu\n", i, j);
 	}
 
 	return 0;
@@ -116,8 +112,6 @@ read_mark(
 	size_t imark;
 	const size_t *kmp;
 
-	debug(2, "read_mark()\n");
-
 	if (!mark->len)
 		return 0;
 
@@ -144,8 +138,6 @@ read_mark(
 			break;
 		assert(!ret);
 
-		debug(3, "read_mark: imark=%zu c='%c'\n", imark, c);
-
 		while (mark->data[imark] != c) {
 			if (!imark) {
 				if (copy_save(copy, engine->out, save, &c, 1))
@@ -171,7 +163,6 @@ read_mark(
 fail:
 	ret = -1;
 end:
-	debug(2, "read_mark -> %d\n", ret);
 	if (!kmp_)
 		free((void *)kmp);
 	return ret;
@@ -194,8 +185,6 @@ read_header(
 	int ret = -1;
 	int sret;
 	s_chunk *ffactor = NULL;
-
-	debug(2, "read_header()\n");
 
 	if (chunk_string_ctor(&ffactor, "ffactor"))
 		return -1;
@@ -349,8 +338,6 @@ fstate_content(
 	int cmd;
 	s_engine *e = engine;
 
-	debug(2, "fstate_content(%d)\n", state);
-
 	ret = read_mark(e, e->pre, e->kpre, !e->ncopy, NULL);
 	if (ret == -1)
 		return -1;
@@ -467,8 +454,6 @@ engine_init(
 {
 	int ret = -1;
 	s_engine *engine;
-
-	debug(2, "engine_init()\n");
 
 	engine = malloc(sizeof(*engine));
 	if (!engine) {
@@ -629,8 +614,6 @@ engine_std(s_keyset *env)
 {
 	s_file *in, *out;
 	const char *p_in, *p_out;
-
-	debug(2, "engine_std()\n");
 
 	p_in = strdup("<stdin>");
 	if (!p_in) {

@@ -28,16 +28,6 @@ get_C()
   done
 }
 
-get_D()
-{
-  {
-    echo 0
-    git grep -h 'debug(' |
-    sed -n 's/^	*debug(\([0-9]*\),.*$/\1/p'
-  } |
-  sort -u
-}
-
 get_E()
 {
   echo n

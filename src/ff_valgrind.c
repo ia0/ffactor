@@ -22,7 +22,6 @@
 #include <string.h> /* memcpy, strcmp, strdup */
 #include <err.h> /* warn */
 
-#include <ff_debug.h>
 #include <ff_valgrind.h>
 
 /** @brief Read the content of `/proc/self/exe`. */
@@ -84,8 +83,6 @@ valgrind_bootstrap(int *pargc, char ***pargv, const char *valopt)
 
 	if (get_self_path(&path) < 0)
 		goto free_argv;
-
-	debug(1, "Bootstrap %s.\n", path);
 
 	argv[0] = (char[]){ "valgrind" };
 	argv[1] = (char[]){ "-q" };

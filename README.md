@@ -12,7 +12,6 @@ Build
 Options:
 - `B=<dir>` compiles in directory `<dir>`
 - `C=<compiler>` compiles with `<compiler>`
-- `D=[0-3]` compiles with debug outputs
 - `E=[ny]` considers warnings as errors
 - `O=[0-3s]` compiles with optimization
 - `V=[ny]` print executed commands

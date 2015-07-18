@@ -19,19 +19,16 @@
 
 for C in $(get_C)
 do
-  for D in $(get_D)
+  for E in $(get_E)
   do
-    for E in $(get_E)
+    for O in $(get_O)
     do
-      for O in $(get_O)
+      for V in $(get_V)
       do
-        for V in $(get_V)
-        do
-          make clean
-          make -j C=$C D=$D E=$E O=$O V=$V &&
-          make -j test ||
-          exit 1
-        done
+        make clean
+        make -j C=$C E=$E O=$O V=$V &&
+        make -j test ||
+        exit 1
       done
     done
   done
