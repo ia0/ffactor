@@ -81,7 +81,7 @@ $(BIN): $(OBJS)
 $(OBJS): $(B)/%.o: src/%.c
 	$(PP) "[32m  CC $@[m"
 	$(DO)mkdir -p $(dir $@)
-	$(DO)$(CC) $(DEFINES) -Iinclude -MMD -c $< -o $@
+	$(DO)$(CC) $(DEFINES) -Isrc -MMD -c $< -o $@
 
 TESTS := $(shell find test -mindepth 1 -maxdepth 1 -type d)
 TESTS := $(patsubst %,$(B)/%/ok,$(TESTS))
