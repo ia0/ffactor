@@ -30,8 +30,8 @@ get_C()
 
 get_E()
 {
-  echo n
   echo y
+  echo n
 }
 
 get_O()
