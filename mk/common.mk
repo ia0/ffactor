@@ -33,13 +33,13 @@
 # FF_DIFF: diff command
 #
 # The following phony rules are provided:
-# ff_all: develop all factor files and copy all verbatim files
+# ff_all: expand all factor files and copy all verbatim files
 # ff_test: test all generated files for potential modification
 # ff_clean: clean build directory (but leave ffactor executable)
 
 FF_O := $(or $(FF_O),2)
 FF_V := $(or $(FF_V),n)
-FF_DIFF := $(or $(FF_DIFF),git diff --no-index --)
+FF_DIFF := $(or $(FF_DIFF),diff)
 
 ifeq ($(FF_V),y)
 FF_DO :=
