@@ -85,7 +85,11 @@ $(OBJS): $(B)/%.o: src/%.c
 
 TESTS := $(shell find test -mindepth 1 -maxdepth 1 -type d)
 TESTS := $(patsubst %,$(B)/%/ok,$(TESTS))
+ifneq ($(shell which git),)
 DIFF := git diff --no-index --
+else
+DIFF := diff
+endif
 
 .PHONY: test
 test: $(TESTS)

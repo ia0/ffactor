@@ -14,11 +14,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+cst_B=true
 get_B()
 {
   echo build
 }
 
+cst_C=true
 get_C()
 {
   local c
@@ -28,18 +30,21 @@ get_C()
   done
 }
 
+cst_E=false
 get_E()
 {
   echo y
   echo n
 }
 
+cst_O=true
 get_O()
 {
   seq 0 3
   echo s
 }
 
+cst_V=false
 get_V()
 {
   echo n

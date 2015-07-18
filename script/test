@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-. $(dirname "$0")/common.sh
+. "$(dirname "$0")/common.sh"
 
 for C in $(get_C)
 do
