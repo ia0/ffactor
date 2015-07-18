@@ -1,4 +1,4 @@
-# FFactor processes factored file into developed files.
+# ffactor expands factored files according to an environment.
 # Copyright (C) 2015  ia0
 #
 # This program is free software: you can redistribute it and/or modify
