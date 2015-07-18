@@ -17,3 +17,5 @@ configuration file (which is most probably the expanded version of a
 factored file):
 
     (add-to-list 'auto-mode-alist '("\\.ffactor\\'" nil t))
+
+Configuration contributions for other editors are warmly welcomed.

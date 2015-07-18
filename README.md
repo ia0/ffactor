@@ -4,8 +4,8 @@ ffactor
 *ffactor* expands factored files according to an environment.
 
 
-Which problem is solved and how
--------------------------------
+Problem solved
+--------------
 
 You may have an account on several machines: at home, at school, at
 work, or in associations. These machines may have different
@@ -22,7 +22,7 @@ duplication and may be quite annoying to synchronize.
 according to a given environment. The factored files are shared among
 all machines (with git, svn, or rsync for example), while the
 environment description is specific to one machine and may differ from
-one machine to the other. Since the environment description is small,
+one machine to another. Since the environment description is small,
 the management of configuration files is easier: you quickly describe
 the local environment, fetch the shared factored files, and expand
 them locally according to the described environment.
@@ -83,7 +83,7 @@ one of the following commands:
 - `if <cond>`, `elif <cond>`, `else`, and `endif` conditionally
   evaluates nested commands: the first branch for which `<cond>` is
   true is evaluated, while other branches are ignored
-- ` <command>` behaves as `<command>`: leading spaces are ignored
+- ` <command>` behaves as `<command>`: leading spaces are ignored
 
 A key starts with a letter and may contain any of the following
 characters: a letter, a digit, a slash, an underscore, or a dash. A
@@ -98,7 +98,7 @@ A factored source file starts with a header defining the prefix and
 suffix that delimit commands (which are the same as those of
 environment files). Here is the general overview of a factored file:
 
-    PRE "ffactor" SUF PRE SUF { content PRE command SUF }* content
+    <p>ffactor<s><p><s>{<content><p><command><s>}*<content>
 
 The executable will look for the first occurrence of `ffactor` and
 deduce that the prefix is everything from the beginning of the file to
@@ -141,7 +141,7 @@ suffix is a line-feed:
     #@endif
     Last line.
 
-And here is associated the expanded file:
+And here is the associated expanded file:
 
     First line.
     This gets printed.
@@ -158,4 +158,4 @@ Alternatives
 - [uconf](https://github.com/rbarrois/uconf) is written in python and
   deals with file installation
 
-Please send a pull request if you heard of similar projects.
+Links to other similar projects are warmly welcomed.
