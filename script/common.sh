@@ -26,7 +26,7 @@ get_C()
   local c
   for c in clang gcc
   do
-    basename "$(which $c)"
+    which $c >/dev/null && echo $c
   done
 }
 
