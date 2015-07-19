@@ -78,16 +78,12 @@ you want:
     git add env/01-first
     git add env/99-last
 
-The next file is the [script/init](script/init) shell script. It
-creates (if non-existent) a `.configrc` file in your home directory
-and it creates (if non-existent) a symlink from this `.configrc` to
-`env/50-local`. This `.configrc` file is the environment file specific
-to the current machine. Once you modified the shell script to your
-needs, you may execute it to create both the `.configrc` file and
-`env/50-local` symlink:
+The next file is the [script/init](script/init) shell script. It is
+used by `make` to generate `env/50-local`. This `env/50-local` file is
+the environment file specific to the current machine. Once you
+modified the shell script to your needs, you may add it:
 
     git add script/init
-    make init
 
 The last file is the [Makefile](Makefile). It mainly includes a file
 from the *ffactor* repository that does all the job and just wraps of
@@ -96,7 +92,7 @@ the *ffactor* executable. Here are the commands available:
 - `make [all]` expands factored files and copy verbatim files from
   `src` to `dst` according to `env`, then it executes
   `dst/script/install` to install the destination files
-- `make init` creates the local environment file with `script/init`
+- `make pull` synchronizes the repository
 - `make test` checks whether destination files have been modified (for
   each source file, a `.gen` file remembers the last generated file,
   which may be a copy or an expansion)
@@ -115,21 +111,15 @@ Common usage
 ------------
 
 When you have access to a new machine, you may clone your repository
-in your home directory:
+in your home directory and build everything:
 
     git clone ... ~/config
     cd ~/config
-
-You now just need to call `make`. It will fetch the *ffactor*
-repository, create your local environment file, and build everything.
-You could do this step by step with the following commands:
-
-    git submodule update --init
-    make init
     make
 
 If you edit your source or environment files or if you update your
-repository, you may run `make` to build what needs to be updated.
+repository, you may run `make pull` to synchronize and `make` to build
+what needs to be updated.
 
 
 Syntax highlighting

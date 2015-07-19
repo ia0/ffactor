@@ -1,47 +1,5 @@
 #!/bin/sh
 
-[ $# -eq 1 ] ||
-{ echo "Usage: make init"; exit 1; }
+. ffactor/script/init.sh
 
-FF_E="$1"
-shift
-
-CONFIG_RC="$HOME/.configrc"
-LOCAL_ENV="$FF_E/50-local"
-
-valid_key()
-{
-  [ -z "$(echo -n "$1" | tr -d 'A-Za-z0-9/_-')" ] &&
-  [ -z "$(echo -n "$1" | head -c1 | tr -d 'A-Za-z')" ]
-}
-
-first_bin()
-{
-  local i
-  for i in "$@"
-  do
-    valid_key "$i" ||
-    { echo "Skipping invalid key $i." >&2; continue; }
-    which "$i" >/dev/null &&
-    { echo "set bin/$i"; return 0; }
-  done
-  return 1
-}
-
-generate()
-{
-  first_bin emacs vim vi ||
-  echo "No editor found." >&2
-}
-
-if [ ! -e "$CONFIG_RC" ]
-then
-  echo "[34m  GEN $CONFIG_RC[m"
-  generate > "$CONFIG_RC"
-fi
-
-if [ ! -e "$LOCAL_ENV" ]
-then
-  echo "[34m  LN $LOCAL_ENV[m"
-  ln -s "$CONFIG_RC" "$LOCAL_ENV"
-fi
+set_bin Editor emacs vim vi

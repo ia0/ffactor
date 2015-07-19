@@ -1,4 +1,3 @@
-#!/bin/sh
 # ffactor expands factored files according to an environment.
 # Copyright (C) 2015  ia0
 #
@@ -15,43 +14,37 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-. "$(dirname "$0")/common.sh"
+[ $# -eq 1 ] ||
+{ echo "Usage: make"; exit 1; }
 
-A='B C E O V'
+FF_D="$(readlink -f "$1")"
+shift
 
-for a in $A
-do
-  eval va=\$$a
-  if [ "$va" ]
+check_install()
+{
+  local src="$FF_D/$1" dst="$2"
+  if [ ! -e "$src" ]
   then
-    [ "$a" = B -o "$a" = C ] ||
-    get_$a | grep -F "$va" >/dev/null ||
-    echo "\$(error Bad value $a=$va)"
-  else
-    va=$(get_$a | head -n1)
-    [ "$a" = C -a ! "$va" ] &&
-    echo "\$(error No compiler found)"
+    echo "[1;31mError:[m Install source does not exist"
+    echo "Source: $src"
+    exit 1
   fi
-  echo "$a := $va"
-  echo "ifeq (\$($a),)"
-  echo "override $a := $va"
-  echo "endif"
-  if eval \$cst_$a
+  # Do not remove installed links.
+  [ -h "$dst" ] && [ "$(readlink "$dst")" = "$src" ] && return 0
+  if [ -e "$dst" ]
   then
-    echo "ifneq (\$($a),$va)"
-    echo "\$(error Cannot override $a=$va with $a=\$($a))"
-    echo "endif"
+    if diff "$dst" "$src" >/dev/null
+    then
+      echo "[1;33m  RM $dst (same content)[m"
+      rm "$dst"
+    else
+      echo "[1;31mError:[m Install destination exists and has different content"
+      echo "Destination: $dst"
+      echo "     Source: $src"
+      exit 1
+    fi
   fi
-  unset va
-done
-unset a
-
-sp="\$(info [33m"
-for a in $A
-do
-  echo -n "$sp$a=\$($a)"
-  sp=" "
-done
-unset a
-unset sp
-echo "[m)"
+  echo "[34m  LN $dst[m"
+  mkdir -p "$(dirname "$dst")"
+  ln -s "$src" "$dst"
+}

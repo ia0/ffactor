@@ -17,8 +17,10 @@
 # All variables are prefixed with 'FF_' and all phony rules are
 # prefixed with 'ff_'.
 #
+# The following variables must be defined:
+# FF_ENVS: environment files (order is preserved)
+#
 # The following variables may be overwritten:
-# FF_E: environment directory (default: env)
 # FF_S: source directory (default: src)
 # FF_D: destination directory (default: dst)
 # FF_V: commands are printed if y (default: n)
@@ -34,7 +36,6 @@
 # ff_test: test all generated files for potential modification
 # ff_clean: clean destination directory
 
-FF_E := $(or $(FF_E),env)
 FF_S := $(or $(FF_S),src)
 FF_D := $(or $(FF_D),dst)
 FF_V := $(or $(FF_V),n)
@@ -49,7 +50,6 @@ FF_DO := @
 FF_PP := @echo
 endif
 
-FF_ENVS := $(shell find $(FF_E) -type f -o -type l | sort)
 FF_SRCS := $(shell find $(FF_S) -type f)
 FF_FSRCS := $(filter %.ffactor,$(FF_SRCS))
 FF_VSRCS := $(filter-out %.ffactor,$(FF_SRCS))

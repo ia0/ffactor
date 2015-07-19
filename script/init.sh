@@ -1,4 +1,3 @@
-#!/bin/sh
 # ffactor expands factored files according to an environment.
 # Copyright (C) 2015  ia0
 #
@@ -15,43 +14,32 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-. "$(dirname "$0")/common.sh"
+valid_key()
+{
+  [ -z "$(echo -n "$1" | tr -d 'A-Za-z0-9/_-')" ] &&
+  [ -z "$(echo -n "$1" | head -c1 | tr -d 'A-Za-z')" ]
+}
 
-A='B C E O V'
-
-for a in $A
-do
-  eval va=\$$a
-  if [ "$va" ]
-  then
-    [ "$a" = B -o "$a" = C ] ||
-    get_$a | grep -F "$va" >/dev/null ||
-    echo "\$(error Bad value $a=$va)"
-  else
-    va=$(get_$a | head -n1)
-    [ "$a" = C -a ! "$va" ] &&
-    echo "\$(error No compiler found)"
-  fi
-  echo "$a := $va"
-  echo "ifeq (\$($a),)"
-  echo "override $a := $va"
-  echo "endif"
-  if eval \$cst_$a
-  then
-    echo "ifneq (\$($a),$va)"
-    echo "\$(error Cannot override $a=$va with $a=\$($a))"
-    echo "endif"
-  fi
-  unset va
-done
-unset a
-
-sp="\$(info [33m"
-for a in $A
-do
-  echo -n "$sp$a=\$($a)"
-  sp=" "
-done
-unset a
-unset sp
-echo "[m)"
+set_bin()
+{
+  local i
+  echo "- $1"
+  echo -n "$1:" >&2
+  shift
+  for i in "$@"
+  do
+    if ! valid_key "$i"
+    then
+      echo -n " [33m$i[m" >&2
+      continue
+    fi
+    if which "$i" >/dev/null
+    then
+      echo "set bin/$i"
+      echo -n " [32m$i[m" >&2
+    else
+      echo -n " [31m$i[m" >&2
+    fi
+  done
+  echo >&2
+}

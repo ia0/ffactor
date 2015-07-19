@@ -2,4 +2,4 @@
 /bin/ffactor
 /build/
 /dst/
-/env/*-local
+/env/50-local
