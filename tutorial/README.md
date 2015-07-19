@@ -1,15 +1,19 @@
 Tutorial
 ========
 
-This tutorial describes a setup to deal with factored files. This is
-not the only way to use the executable but it is general enough to be
-used as-is.
+This tutorial describes how to setup a repository to deal with
+factored files. This is not the only way to use the executable but it
+is general enough to be used as-is.
 
 Requirements are:
 - the `make` command
 - the `git` command
 - a shell with the usual commands and executables
 - access to github
+
+
+Initial setup
+-------------
 
 We create our repository in a folder named `config` in our home
 directory:
@@ -50,7 +54,7 @@ The next file is [src/emacs](src/emacs), which is a verbatim source
 file. It is verbatim because it does not end with `.ffactor`, which is
 the file extension of factored files. Verbatim files are copied from
 `src` to `dst` without modifications. You may now add any verbatim
-files you want:
+files you want (for instance all your configuration files):
 
     git add src/emacs
 
@@ -58,16 +62,16 @@ The next files are [src/bashrc.ffactor](src/bashrc.ffactor) and
 [src/script/install.ffactor](src/script/install.ffactor), which are
 factored source files, since they end with the `.ffactor` file
 extension. Factored files from `src` are expanded to `dst` according
-to the environment files in `env`. See the [root readme](/) for more
+to the environment files in `env`. See the root readme for more
 information about factored files syntax. You may now add any factored
-files you want:
+files you want (or switch any verbatim file to its factored version):
 
     git add src/bashrc.ffactor
     git add src/script/install.ffactor
 
 The next files are [env/01-first](env/01-first) and
 [env/99-last](env/99-last). They are environment files shared among
-all machines. See the [root readme](/) for more information about
+all machines. See the root readme for more information about
 environment files syntax. You may now add any shared environment files
 you want:
 
@@ -98,11 +102,34 @@ the *ffactor* executable. Here are the commands available:
   which may be a copy or an expansion)
 - `make clean` deletes the destination folder
 
-You may now add it and commit:
+You may now add it, commit, and push it to some place (like github):
 
     git add Makefile
     git commit -m'initial commit'
+    git push ...
+
+You may finally run `make` to build everything.
+
+
+Common usage
+------------
+
+When you have access to a new machine, you may clone your repository
+in your home directory:
+
+    git clone ... ~/config
+    cd ~/config
+
+You now just need to call `make`. It will fetch the *ffactor*
+repository, create your local environment file, and build everything.
+You could do this step by step with the following commands:
+
+    git submodule update --init
+    make init
     make
+
+If you edit your source or environment files or if you update your
+repository, you may run `make` to build what needs to be updated.
 
 
 Syntax highlighting
