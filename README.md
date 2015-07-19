@@ -98,21 +98,30 @@ condition may be:
 
 A factored source file starts with a header defining the prefix and
 suffix that delimit commands (which are the same as those of
-environment files). Here is the general overview of a factored file:
+environment files). Here is the general overview of a factored file
+(spaces and newlines have no meaning and are used to help reading):
 
-    <PRE>ffactor<SUF><PRE><SUF>{<content><PRE><command><SUF>}*<content>
+    content
+    PRE "ffactor" prelen SUF
+    PRE SUF
+    { content PRE command SUF }*
+    content
 
 The executable will look for the first occurrence of `ffactor` and
-deduce that the prefix is everything from the beginning of the file to
-this first occurrence of `ffactor`. It will then look for the next
-occurrence of the prefix and deduce that the suffix is everything from
-the first occurrence of `ffactor` to the second prefix. It will
-finally ensure that the second prefix is immediately followed by a
-suffix. This is useful for two reasons: the prefix and suffix are
-well-balanced (which helps syntax highlighting) and the probability of
-a valid header accidentally occurring in a random file is reduced.
+interpret the next character as the prefix length. The prefix length
+must be a digit between 1 and 8 (both inclusive). The executable will
+then deduce the prefix and will copy everything from the beginning of
+the file to the prefix. It will then look for the next occurrence of
+the prefix and deduce that the suffix is everything from the prefix
+length digit to the second prefix. It will finally ensure that the
+second prefix is immediately followed by a suffix. This is useful for
+two reasons: the prefix and suffix are well-balanced (which helps
+syntax highlighting) and the probability of a valid header
+accidentally occurring in a random file is reduced.
 
-Both the prefix and suffix must be non-empty.
+Both the prefix and suffix must be non-empty and smaller than 9 bytes.
+The fact that some content is allowed before the first prefix permits
+for shell script to be correctly syntax highlighted.
 
 The executable will then repeatedly look for the next occurrence of
 the prefix followed by an occurrence of the suffix. The prefix and
@@ -129,9 +138,10 @@ Here is an environment file sample:
 Here is a factored file sample, where the prefix is `#@` and the
 suffix is a line-feed:
 
-    #@ffactor
-    #@
     First line.
+    #@ffactor2
+    #@
+    Second line.
     #@if (and true (not false) 1 (not 0))
     This gets printed.
     #@ if (or false (not true) 0 (not 1))
@@ -146,6 +156,7 @@ suffix is a line-feed:
 And here is the associated expanded file:
 
     First line.
+    Second line.
     This gets printed.
     Last line.
 

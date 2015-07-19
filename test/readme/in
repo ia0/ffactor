@@ -1,6 +1,7 @@
+First line.
 #@ffactor2
 #@
-First line.
+Second line.
 #@if (and true (not false) 1 (not 0))
 This gets printed.
 #@ if (or false (not true) 0 (not 1))

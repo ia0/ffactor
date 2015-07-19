@@ -36,12 +36,12 @@ generate()
 
 if [ ! -e "$CONFIG_RC" ]
 then
-  echo "[32m  GEN $CONFIG_RC[m"
+  echo "[34m  GEN $CONFIG_RC[m"
   generate > "$CONFIG_RC"
 fi
 
 if [ ! -e "$LOCAL_ENV" ]
 then
-  echo "[32m  LN $LOCAL_ENV[m"
+  echo "[34m  LN $LOCAL_ENV[m"
   ln -s "$CONFIG_RC" "$LOCAL_ENV"
 fi

@@ -79,7 +79,7 @@ header ::= .* PRE=.{p} "ffactor" p=[1-8] SUF=.{1,8} PRE SUF
 An environment file is simply a factored file as if a header was
 present at the beginning of the file with an empty prefix and a
 line-feed suffix. For a factored file, both the prefix and suffix must
-be non-empty.
+be non-empty and smaller than 9 bytes.
 
 When a non-terminal takes a parameter, its branches may be taken only
 if its actual argument satisfies the last constraint. A constraint of
