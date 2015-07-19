@@ -19,6 +19,8 @@
 #ifndef FF_PARSER_H
 #define FF_PARSER_H
 
+#include <stddef.h> /* size_t */
+
 /** @brief Match a token and update data accordingly. */
 extern int /** @return 0 or 1 whether it matched */
 match(
@@ -33,7 +35,11 @@ match(
 struct parser;
 typedef struct parser s_parser;
 
-typedef int (*f_state)(char, void *);
+typedef int /** @return 0 on success, error otherwise */
+(*f_state)(
+	char state,	/**< state */
+	void *arg	/**< __borrow__ argument */
+);
 
 /** @brief Create a parser. */
 extern int /** @return 0 on success, -1 on error */

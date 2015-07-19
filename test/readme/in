@@ -1,4 +1,4 @@
-#@ffactor
+#@ffactor2
 #@
 First line.
 #@if (and true (not false) 1 (not 0))

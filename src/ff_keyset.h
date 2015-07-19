@@ -19,7 +19,7 @@
 #ifndef FF_KEYSET_H
 #define FF_KEYSET_H
 
-#include <stddef.h>
+#include <stddef.h> /* size_t */
 
 /** @brief Parse a key. */
 extern const char * /** @return pointer to end of key */

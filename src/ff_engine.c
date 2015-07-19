@@ -18,10 +18,13 @@
 
 #include <assert.h> /* assert */
 #include <stdlib.h> /* free, malloc */
-#include <string.h> /* memcmp, memset, strdup, strncmp */
+#include <string.h> /* memcmp, memmove, memset, strdup, strncmp */
 #include <err.h> /* warn, warnx */
 
+#include <stdio.h> /* DEBUG */
+
 #include <ff_chunk.h>
+#include <ff_cyclic.h>
 #include <ff_keyset.h>
 #include <ff_file.h>
 #include <ff_parser.h>
@@ -82,13 +85,6 @@ kmp_table(
 	return 0;
 }
 
-typedef int /**< @return 0 on success, -1 on error */
-(*f_callback)(
-	void *arg_,		/**< __borrow__ argument */
-	const char *data,	/**< __borrow__ source */
-	size_t len		/**< source length */
-);
-
 struct copy_save {
 	int copy;	/**< whether to copy */
 	s_file *file;	/**< __borrow__ output file */
@@ -104,19 +100,45 @@ copy_save(void *arg_, const char *data, size_t len)
 
 	if (arg->copy && file_write(arg->file, data, len))
 		return -1;
+
 	if (arg->save && chunk_push(arg->save, data, len))
 		return -1;
+
+	return 0;
+}
+
+struct delayed_copy {
+	s_file *file;		/**< __borrow__ output file */
+	s_cyclic *buffer;	/**< __borrow__ temporary buffer */
+};
+typedef struct delayed_copy s_delayed_copy;
+
+static int
+file_write_(void *arg, const char *data, size_t len)
+{
+	return file_write(arg, data, len);
+}
+
+/** @brief Delay copy to file through a cyclic buffer. */
+static int
+delayed_copy(void *arg_, const char *data, size_t len)
+{
+	s_delayed_copy *arg = arg_;
+
+	if (cyclic_push_cb(arg->buffer, data, len, file_write_, arg->file))
+		return -1;
+
 	return 0;
 }
 
 /** @brief Read until a mark is reached. */
 static int /**< @return 0 on success, 1 on end-of-file, -1 on error */
-read_mark_(
+read_mark_cb(
 	s_engine *engine,	/**< __borrow__ engine */
 	const s_chunk *mark,	/**< __borrow__ mark chunk */
 	const size_t *kmp_,	/**< __borrow__ mark KMP */
-	f_callback callback,	/**< function called on passed data */
-	void *arg		/**< callback's first argument */
+	f_callback callback,	/**< callback function */
+	void *arg		/**< callback argument */
 )
 {
 	int ret = 0;
@@ -193,7 +215,7 @@ read_mark(
 	if (save)
 		save->len = 0;
 
-	return read_mark_(engine, mark, kmp, copy_save, &arg);
+	return read_mark_cb(engine, mark, kmp, copy_save, &arg);
 }
 
 /**
@@ -212,30 +234,72 @@ read_header(
 {
 	int ret = -1;
 	int sret;
+	char c;
+	size_t p;
 	s_chunk *ffactor = NULL;
+	s_delayed_copy arg = {
+		.file = engine->out,
+		.buffer = NULL,
+	};
+
+	/* <HERE> .* PRE=.{p} "ffactor" p=[1-8] SUF=.{1,8} PRE SUF */
+	/* fprintf(stderr, "read_header 1\n"); */
 
 	if (chunk_string_ctor(&ffactor, "ffactor"))
-		return -1;
-
-	if (chunk_empty_ctor(&engine->pre, 16))
 		goto free;
 
-	sret = read_mark(engine, ffactor, NULL, 0, engine->pre);
+	if (cyclic_ctor(&arg.buffer, 8))
+		goto free;
+
+	sret = read_mark_cb(engine, ffactor, NULL, delayed_copy, &arg);
 	if (sret) {
 		if (sret == 1)
 			warnx("Incomplete header (ffactor marker not found)");
 		goto free;
 	}
 
+	/* .* PRE=.{p} "ffactor" <HERE> p=[1-8] SUF=.{1,8} PRE SUF */
+	/* fprintf(stderr, "read_header 2\n"); */
+
+	if (cyclic_make_chunk(&engine->pre, arg.buffer))
+		goto free;
+
 	if (!engine->pre->len) {
 		warnx("Empty prefix");
 		goto free;
 	}
 
+	sret = file_read(engine->in, &c);
+	if (sret) {
+		if (ret == 1)
+			warnx("Incomplete header (missing prefix length)");
+		goto free;
+	}
+
+	/* .* PRE=.{p} "ffactor" p=[1-8] <HERE> SUF=.{1,8} PRE SUF */
+	/* fprintf(stderr, "read_header 3\n"); */
+
+	if (c < '1' || c > '8') {
+		warnx("0x%02x is not a valid prefix length", (unsigned char)c);
+		goto free;
+	}
+	p = (size_t)(c - '0');
+
+	if (engine->pre->len < p) {
+		warnx("Prefix too small (%zu < %zu)", engine->pre->len, p);
+		goto free;
+	}
+
+	if (file_write(engine->out, engine->pre->data, engine->pre->len - p))
+		goto free;
+
+	memmove(engine->pre->data, &engine->pre->data[engine->pre->len - p], p);
+	engine->pre->len = p;
+
 	if (kmp_table(&engine->kpre, engine->pre))
 		goto free;
 
-	if (chunk_empty_ctor(&engine->suf, 16))
+	if (chunk_empty_ctor(&engine->suf, 8))
 		goto free;
 
 	sret = read_mark(engine, engine->pre, engine->kpre, 0, engine->suf);
@@ -245,8 +309,16 @@ read_header(
 		goto free;
 	}
 
+	/* .* PRE=.{p} "ffactor" p=[1-8] SUF=.{1,8} PRE <HERE> SUF */
+	/* fprintf(stderr, "read_header 4\n"); */
+
 	if (!engine->suf->len) {
 		warnx("Empty suffix");
+		goto free;
+	}
+
+	if (engine->suf->len > 8) {
+		warnx("Suffix too long (%zu > 8)", engine->suf->len);
 		goto free;
 	}
 
@@ -260,6 +332,8 @@ read_header(
 		goto free;
 	}
 
+	/* .* PRE=.{p} "ffactor" p=[1-8] SUF=.{1,8} PRE SUF <HERE> */
+
 	if (ffactor->len) {
 		warnx("Non-empty second part");
 		goto free;
@@ -268,6 +342,7 @@ read_header(
 	ret = 0;
 
 free:
+	cyclic_dtor(arg.buffer);
 	chunk_dtor(ffactor);
 	return ret;
 }

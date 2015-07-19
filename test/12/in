@@ -1,4 +1,4 @@
-<ffactor><><- Trick to make the first line less dumb.
+<ffactor1><><- Trick to make the first line less dumb.
 >First line.
 Second <if true>line<endif>.
 Third line.

@@ -19,6 +19,8 @@
 #ifndef FF_CHUNK_H
 #define FF_CHUNK_H
 
+#include <stddef.h> /* size_t */
+
 /**
  * @file
  * @brief Tail-extensible binary data.

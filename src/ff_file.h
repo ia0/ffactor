@@ -19,7 +19,7 @@
 #ifndef FF_FILE_H
 #define FF_FILE_H
 
-#include <stdio.h> /* FILE */
+#include <stdio.h> /* FILE, size_t */
 
 /** @brief Abstract file. */
 struct file;

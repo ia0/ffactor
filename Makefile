@@ -62,6 +62,7 @@ PP := @echo
 endif
 
 SRCS += src/ff_chunk.c
+SRCS += src/ff_cyclic.c
 SRCS += src/ff_keyset.c
 SRCS += src/ff_file.c
 SRCS += src/ff_parser.c

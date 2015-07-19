@@ -73,12 +73,13 @@ A factored file is parsed as the `file` non-terminal:
 
 ```
 file ::= header content(CONTENT)
-header ::= PRE=.+ "ffactor" SUF=.+ PRE SUF
+header ::= .* PRE=.{p} "ffactor" p=[1-8] SUF=.{1,8} PRE SUF
 ```
 
-An environment file is simply a factored file without header: the
-prefix is empty and the suffix is a line-feed. For a factored file,
-both the prefix and suffix must be non-empty.
+An environment file is simply a factored file as if a header was
+present at the beginning of the file with an empty prefix and a
+line-feed suffix. For a factored file, both the prefix and suffix must
+be non-empty.
 
 When a non-terminal takes a parameter, its branches may be taken only
 if its actual argument satisfies the last constraint. A constraint of
