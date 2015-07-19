@@ -36,6 +36,8 @@ ifeq ($(C),gcc)
 CC += -std=c11 -D_BSD_SOURCE -Wall -Wextra
 endif
 
+CC += -Wno-padded
+
 ifeq ($(E),y)
 CC += -Werror
 endif

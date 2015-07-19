@@ -46,7 +46,6 @@ struct parser {
 	s_chunk *stack;		/**< states stack */
 	const f_state *states;	/**< __borrow__ state functions */
 	char len;		/**< number of states */
-	char pad[sizeof(void *) - 1];
 };
 
 extern int

@@ -82,30 +82,41 @@ kmp_table(
 	return 0;
 }
 
-static int /**< @return 0 on success, -1 on error */
-copy_save(
-	int copy,		/**< whether to copy */
-	s_file *file,		/**< __borrow__ output file */
-	s_chunk *save,		/**< __borrow__ save chunk (may be null) */
+typedef int /**< @return 0 on success, -1 on error */
+(*f_callback)(
+	void *arg_,		/**< __borrow__ argument */
 	const char *data,	/**< __borrow__ source */
 	size_t len		/**< source length */
-)
+);
+
+struct copy_save {
+	int copy;	/**< whether to copy */
+	s_file *file;	/**< __borrow__ output file */
+	s_chunk *save;	/**< __borrow__ save chunk (may be null) */
+};
+typedef struct copy_save s_copy_save;
+
+/** @brief Copy to file and save to chunk. */
+static int
+copy_save(void *arg_, const char *data, size_t len)
 {
-	if (copy && file_write(file, data, len))
+	s_copy_save *arg = arg_;
+
+	if (arg->copy && file_write(arg->file, data, len))
 		return -1;
-	if (save && chunk_push(save, data, len))
+	if (arg->save && chunk_push(arg->save, data, len))
 		return -1;
 	return 0;
 }
 
 /** @brief Read until a mark is reached. */
 static int /**< @return 0 on success, 1 on end-of-file, -1 on error */
-read_mark(
+read_mark_(
 	s_engine *engine,	/**< __borrow__ engine */
 	const s_chunk *mark,	/**< __borrow__ mark chunk */
 	const size_t *kmp_,	/**< __borrow__ mark KMP */
-	int copy,		/**< whether to copy */
-	s_chunk *save		/**< __borrow__ save chunk (may be null) */
+	f_callback callback,	/**< function called on passed data */
+	void *arg		/**< callback's first argument */
 )
 {
 	int ret = 0;
@@ -125,9 +136,6 @@ read_mark(
 		kmp = tmp;
 	}
 
-	if (save)
-		save->len = 0;
-
 	for (imark = 0; imark < mark->len; imark++) {
 		char c;
 
@@ -140,22 +148,20 @@ read_mark(
 
 		while (mark->data[imark] != c) {
 			if (!imark) {
-				if (copy_save(copy, engine->out, save, &c, 1))
+				if (callback(arg, &c, 1))
 					goto fail;
 				imark--;
 				break;
 			}
 
-			if (copy_save(copy, engine->out, save,
-				      mark->data, imark - kmp[imark]))
+			if (callback(arg, mark->data, imark - kmp[imark]))
 				goto fail;
 
 			imark = kmp[imark];
 		}
 	}
 
-	if (imark < mark->len &&
-	    copy_save(copy, engine->out, save, mark->data, imark))
+	if (imark < mark->len && callback(arg, mark->data, imark))
 		goto fail;
 
 	goto end;
@@ -166,6 +172,28 @@ end:
 	if (!kmp_)
 		free((void *)kmp);
 	return ret;
+}
+
+/** @brief Read until a mark is reached. */
+static int /**< @return 0 on success, 1 on end-of-file, -1 on error */
+read_mark(
+	s_engine *engine,	/**< __borrow__ engine */
+	const s_chunk *mark,	/**< __borrow__ mark chunk */
+	const size_t *kmp,	/**< __borrow__ mark KMP */
+	int copy,		/**< whether to copy */
+	s_chunk *save		/**< __borrow__ save chunk (may be null) */
+)
+{
+	s_copy_save arg = {
+		.copy = copy,
+		.file = engine->out,
+		.save = save,
+	};
+
+	if (save)
+		save->len = 0;
+
+	return read_mark_(engine, mark, kmp, copy_save, &arg);
 }
 
 /**
