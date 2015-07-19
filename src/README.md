@@ -1,52 +1,13 @@
 Technical documentation
 =======================
 
-Grammar
--------
+Coding principles
+-----------------
 
-```
-file ::= header content(CONTENT)
-
-header ::= PRE=.+ "ffactor" SUF=.+ PRE options SUF
-
-options ::= ""
-
-CMD(x) ::= .* PRE " "* x SUF
-
-content(a) ::=
-{ a : CONTENT ELSE ENDIF }
-| CMD("set " KEY) content(a)
-| CMD("error " msg) content(a)
-| CMD("- " .*) content(a)
-| CMD("") content(a)
-| CMD("if " cond) content(ELSE) content(a)
-{ a : ELSE }
-| CMD("elif " cond) content(ELSE)
-| CMD("else") content(ENDIF)
-{ a : ELSE ENDIF }
-| CMD("endif")
-{ a : CONTENT }
-| .*
-
-cond ::=
-| "0"
-| "1"
-| "(not " cond op(NOT)
-| "(and" op(AND)
-| "(or" op(OR)
-| KEY
-
-op(a) ::=
-{ a : AND OR }
-| " " cond op(a)
-{ a : NOT AND OR }
-| ")"
-
-KEY ::= [A-Za-z][A-Za-z0-9/_-]*
-```
-
-Implementation
---------------
+These coding principles are inspired from
+[Linux](https://github.com/torvalds/linux),
+[Rust](https://github.com/rust-lang/rust), and
+[strongSwan](https://github.com/strongswan/strongswan).
 
 ### Objects
 
@@ -57,9 +18,9 @@ definition is visible from the header file, its invariants are given.
 
 ### Naming
 
-Files are prefixed by `ff_`. Functions are prefixed by their file name
-when they are about an object. Constructors are suffixed by `_ctor`
-and destructors by `_dtor`.
+Files are prefixed with `ff_`. Functions are prefixed with their file
+name when they are about an object. Constructors are suffixed with
+`_ctor` and destructors by `_dtor`.
 
 Typedef are only used for structs, unions, enums, and functions with
 prefix `s_`, `u_`, `e_`, and `f_` respectively. For instance,
@@ -103,3 +64,61 @@ this is done by taking a return pointer as argument.
 In case of errors, take pointers are freed, borrow pointers remain
 valid, and return pointers are null. The content of borrow pointers
 may be indeterminate.
+
+
+Grammar
+-------
+
+A factored file is parsed as the `file` non-terminal:
+
+```
+file ::= header content(CONTENT)
+header ::= PRE=.+ "ffactor" SUF=.+ PRE SUF
+```
+
+An environment file is simply a factored file without header: the
+prefix is empty and the suffix is a line-feed. For a factored file,
+both the prefix and suffix must be non-empty.
+
+When a non-terminal takes a parameter, its branches may be taken only
+if its actual argument satisfies the last constraint. A constraint of
+the form `{ a : FOO BAR }` means that `a` must be either `FOO` or
+`BAR`.
+
+The macro `CMD` matches some content followed by a command given as
+argument. Leading spaces are allowed before the command.
+
+```
+CMD(x) ::= .* PRE " "* x SUF
+
+content(a) ::=
+{ a : CONTENT ELSE ENDIF }
+| CMD("set " KEY) content(a)
+| CMD("error " msg) content(a)
+| CMD("- " .*) content(a)
+| CMD("") content(a)
+| CMD("if " cond) content(ELSE) content(a)
+{ a : ELSE }
+| CMD("elif " cond) content(ELSE)
+| CMD("else") content(ENDIF)
+{ a : ELSE ENDIF }
+| CMD("endif")
+{ a : CONTENT }
+| .*
+
+cond ::=
+| "0"
+| "1"
+| "(not " cond op(NOT)
+| "(and" op(AND)
+| "(or" op(OR)
+| KEY
+
+op(a) ::=
+{ a : AND OR }
+| " " cond op(a)
+{ a : NOT AND OR }
+| ")"
+
+KEY ::= [A-Za-z][A-Za-z0-9/_-]*
+```

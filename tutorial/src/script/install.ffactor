@@ -1,0 +1,39 @@
+#@ffactor
+#@
+#!/bin/sh
+
+[ $# -eq 1 ] ||
+{ echo "Usage: make"; exit 1; }
+
+FF_D="$(readlink -f "$1")"
+shift
+
+check_install()
+{
+  local src="$FF_D/$1" dst="$2" tmp
+  if [ -h "$dst" ]
+  then
+    tmp="$(readlink "$dst")"
+    [ "$tmp" = "$src" ] && return 0
+    echo "[1;33m  RM $dst -> $tmp[m"
+    rm "$dst"
+  fi
+  if [ -e "$dst" ]
+  then
+    if git diff --no-index -- "$dst" "$src"
+    then
+      echo "[1;33m  RM $dst (same content)[m"
+      rm "$dst"
+    else
+      echo "[1;31m  SKIP $dst (file differs)[m"
+      exit 1
+    fi
+  fi
+  echo "[32m  LN $dst -> $src[m"
+  ln -s "$src" "$dst"
+}
+
+check_install bashrc ~/.bashrc
+#@if bin/emacs
+check_install emacs ~/.emacs
+#@endif

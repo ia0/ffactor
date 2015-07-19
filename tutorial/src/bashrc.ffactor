@@ -1,0 +1,23 @@
+#@ffactor
+#@
+# First line of bashrc.
+
+#@- This comment is absent from expanded files.
+# This comments stays in expanded files.
+#@- Commands start with #@ and ends with a line-feed. See the
+#@- README.md at the root of the ffactor repository for more
+#@- information.
+
+# Define some basic aliases.
+alias l=ls
+alias ll='ls -l'
+
+#@if bin/emacs
+alias edit=emacs
+#@elif bin/vim
+alias edit=vim
+#@elif bin/vi
+alias edit=vi
+#@else
+#@error No editor available!
+#@endif

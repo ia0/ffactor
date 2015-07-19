@@ -1,0 +1,6 @@
+- This shared environment file is processed before all others.
+
+set true
+
+- true is now true and false is false (since it is not defined) for
+- all other environment files.

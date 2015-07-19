@@ -1,0 +1,5 @@
+/.config
+/bin/ffactor
+/build/
+/dst/
+/env/*-local

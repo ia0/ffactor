@@ -14,32 +14,32 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# HOWTO
-#
 # All variables are prefixed with 'FF_' and all phony rules are
 # prefixed with 'ff_'.
 #
-# The following variables must be defined:
-# FF_B: build directory
-# FF_E: environment directory
-# FF_S: source directory
-# FF_BIN: ffactor executable
-# FF_ENVS: environment files
-# FF_REPO: ffactor repository
-#
 # The following variables may be overwritten:
-# FF_O: optimization (2, 0, 1, 3, or s)
-# FF_V: verbosity (n or y)
-# FF_DIFF: diff command
+# FF_E: environment directory (default: env)
+# FF_S: source directory (default: src)
+# FF_D: destination directory (default: dst)
+# FF_V: commands are printed if y (default: n)
+# FF_BIN: ffactor executable (default: bin/ffactor)
+# FF_DIFF: diff command (default: git diff --no-index --)
+#
+# The following variables are provided:
+# FF_DO: prefix commands (printed if FF_V is y)
+# FF_PP: prefix messages (printed if FF_V is n)
 #
 # The following phony rules are provided:
-# ff_all: expand all factor files and copy all verbatim files
+# ff_all: expand all factored files and copy all verbatim files
 # ff_test: test all generated files for potential modification
-# ff_clean: clean build directory (but leave ffactor executable)
+# ff_clean: clean destination directory
 
-FF_O := $(or $(FF_O),2)
+FF_E := $(or $(FF_E),env)
+FF_S := $(or $(FF_S),src)
+FF_D := $(or $(FF_D),dst)
 FF_V := $(or $(FF_V),n)
-FF_DIFF := $(or $(FF_DIFF),diff)
+FF_BIN := $(or $(FF_BIN),bin/ffactor)
+FF_DIFF := $(or $(FF_DIFF),git diff --no-index --)
 
 ifeq ($(FF_V),y)
 FF_DO :=
@@ -49,11 +49,12 @@ FF_DO := @
 FF_PP := @echo
 endif
 
+FF_ENVS := $(shell find $(FF_E) -type f -o -type l | sort)
 FF_SRCS := $(shell find $(FF_S) -type f)
 FF_FSRCS := $(filter %.ffactor,$(FF_SRCS))
 FF_VSRCS := $(filter-out %.ffactor,$(FF_SRCS))
-FF_FDSTS := $(patsubst $(FF_S)/%.ffactor,$(FF_B)/%,$(FF_FSRCS))
-FF_VDSTS := $(patsubst $(FF_S)/%,$(FF_B)/%,$(FF_VSRCS))
+FF_FDSTS := $(patsubst $(FF_S)/%.ffactor,$(FF_D)/%,$(FF_FSRCS))
+FF_VDSTS := $(patsubst $(FF_S)/%,$(FF_D)/%,$(FF_VSRCS))
 FF_DSTS := $(FF_FDSTS) $(FF_VDSTS)
 
 FF_CHECK_GEN = [ ! -e $(1).gen -o ! -e $(1) ] || $(FF_DIFF) $(1).gen $(1)
@@ -61,11 +62,11 @@ FF_CHECK_GEN = [ ! -e $(1).gen -o ! -e $(1) ] || $(FF_DIFF) $(1).gen $(1)
 .PHONY: ff_all
 ff_all: $(FF_DSTS)
 
-$(FF_FDSTS): $(FF_B)/%: $(FF_S)/%.ffactor $(FF_BIN) $(FF_ENVS)
+$(FF_FDSTS): $(FF_D)/%: $(FF_S)/%.ffactor $(FF_BIN) $(FF_ENVS)
 $(FF_FDSTS): FF_BUILD_GEN = $(FF_BIN) $(FF_ENVS) -- $< $@.tmp && mv $@.tmp $@.gen
 $(FF_FDSTS): FF_BUILD_DISP = FF
 
-$(FF_VDSTS): $(FF_B)/%: $(FF_S)/%
+$(FF_VDSTS): $(FF_D)/%: $(FF_S)/%
 $(FF_VDSTS): FF_BUILD_GEN = cp $< $@.gen
 $(FF_VDSTS): FF_BUILD_DISP = CP
 
@@ -75,11 +76,6 @@ $(FF_DSTS):
 	$(FF_DO)mkdir -p $(dir $@)
 	$(FF_DO)$(FF_BUILD_GEN)
 	$(FF_DO)cp $@.gen $@
-
-$(FF_BIN):
-	$(FF_DO)$(MAKE) -C $(FF_REPO) \
-	O=$(FF_O) V=$(FF_V) BIN=$(PWD)/$(FF_BIN) \
-	CONFIG=$(PWD)/$(FF_B)/ffactor/.config B=$(PWD)/$(FF_B)/ffactor
 
 FF_DSTOKS := $(addsuffix .ok,$(FF_DSTS))
 
@@ -92,5 +88,5 @@ $(FF_DSTOKS): %.ok:
 
 .PHONY: ff_clean
 ff_clean:
-	$(FF_PP) "[1;31m  RM build[m"
-	$(FF_DO)rm -rf $(FF_B)
+	$(FF_PP) "[1;31m  RM $(FF_D)[m"
+	$(FF_DO)rm -rf $(FF_D)

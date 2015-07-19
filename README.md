@@ -64,7 +64,7 @@ performance is an issue, you may use `O=2`:
 How to use
 ----------
 
-A complete setup tutorial is given in the [example](example) folder.
+A complete setup tutorial is given in the [tutorial](tutorial) folder.
 Here is a quick overview of the executable:
 
     ffactor <env>.. [-- <src> <dst>]
@@ -73,7 +73,9 @@ The `<env>` arguments are environment files, `<src>` is the factored
 source file, and `<dst>` is the expanded destination file. If the
 source and destination files are omitted, then the source file is read
 from standard input and the destination file is written to standard
-output.
+output. Environment files are chained: an environment file sees the
+environment of all files given before on the command line. The source
+file sees the environment of all environment files.
 
 An environment file is parsed as a sequence of lines. Each line may be
 one of the following commands:
@@ -98,7 +100,7 @@ A factored source file starts with a header defining the prefix and
 suffix that delimit commands (which are the same as those of
 environment files). Here is the general overview of a factored file:
 
-    <p>ffactor<s><p><s>{<content><p><command><s>}*<content>
+    <PRE>ffactor<SUF><PRE><SUF>{<content><PRE><command><SUF>}*<content>
 
 The executable will look for the first occurrence of `ffactor` and
 deduce that the prefix is everything from the beginning of the file to
@@ -155,7 +157,7 @@ folder: [env](test/readme/env), [src](test/readme/in), and
 Alternatives
 ------------
 
-- [uconf](https://github.com/rbarrois/uconf) is written in python and
+- [UConf](https://github.com/rbarrois/uconf) is written in python and
   deals with file installation
 
 Links to other similar projects are warmly welcomed.
