@@ -56,7 +56,7 @@ main(int argc, char *argv[])
 				return 1;
 			return 0;
 		}
-		if (engine_config(env, argv[i]))
+		if (engine_env(env, argv[i]))
 			return 1;
 	}
 

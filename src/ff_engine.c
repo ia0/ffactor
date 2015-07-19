@@ -568,7 +568,7 @@ close_stream:
 }
 
 extern int
-engine_config(s_keyset *env, const char *path)
+engine_env(s_keyset *env, const char *path)
 {
 	s_chunk *presuf[2];
 	s_file *file;

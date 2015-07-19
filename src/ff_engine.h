@@ -30,12 +30,12 @@ engine_file(
 	const char *out		/**< __borrow__ output path */
 );
 
-/** @brief Engine from a configuration file. */
+/** @brief Engine from an environment file. */
 /** Like engine_file() but does not expect a header. The prefix is
  * empty and the suffix is a line feed.
  */
 extern int /** @return 0 on success, -1 on error */
-engine_config(
+engine_env(
 	s_keyset *env,		/**< __borrow__ environment */
 	const char *path	/**< __borrow__ path */
 );
