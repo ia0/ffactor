@@ -111,7 +111,7 @@ cyclic_make_chunk(s_chunk **chunk, const s_cyclic *cyclic)
 	const char *data = cyclic->data;
 	size_t len = cyclic->len;
 
-	if (chunk_empty_ctor(chunk, size))
+	if (chunk_ctor(chunk, size))
 		return -1;
 
 	/* Did the buffer cycle? */

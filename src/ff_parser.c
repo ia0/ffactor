@@ -59,7 +59,7 @@ parser_ctor(s_parser **parser, const f_state *states, char len)
 		return -1;
 	}
 
-	if (chunk_empty_ctor(&(*parser)->stack, 16)) {
+	if (chunk_ctor(&(*parser)->stack, 16)) {
 		free(*parser);
 		*parser = NULL;
 		return -1;

@@ -33,7 +33,7 @@ typedef struct keyset s_keyset;
 
 /** @brief Create an empty set of keys. */
 extern int /** @return 0 on success, -1 on error */
-keyset_empty_ctor(
+keyset_ctor(
 	s_keyset **keyset	/**< __return__ created set */
 );
 

@@ -24,7 +24,7 @@
 #include <ff_chunk.h>
 
 extern int
-chunk_empty_ctor(s_chunk **chunk, size_t size)
+chunk_ctor(s_chunk **chunk, size_t size)
 {
 	assert(0 < size && size <= MAX_SIZE);
 
@@ -98,7 +98,7 @@ chunk_string_ctor(s_chunk **chunk, const char *data)
 {
 	size_t len = strlen(data);
 
-	if (chunk_empty_ctor(chunk, len ? len : 1))
+	if (chunk_ctor(chunk, len ? len : 1))
 		return -1;
 
 	if (chunk_push(*chunk, data, len)) {
@@ -115,7 +115,7 @@ chunk_copy_ctor(s_chunk **chunk, const s_chunk *data)
 {
 	size_t len = data->len;
 
-	if (chunk_empty_ctor(chunk, len ? len : 1))
+	if (chunk_ctor(chunk, len ? len : 1))
 		return -1;
 
 	if (chunk_push(*chunk, data->data, data->len)) {

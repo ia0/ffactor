@@ -43,7 +43,7 @@ main(int argc, char *argv[])
 		return 0;
 	}
 
-	if (keyset_empty_ctor(&env))
+	if (keyset_ctor(&env))
 		return 1;
 
 	for (int i = 1; i < argc; i++) {

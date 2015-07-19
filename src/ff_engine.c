@@ -299,7 +299,7 @@ read_header(
 	if (kmp_table(&engine->kpre, engine->pre))
 		goto free;
 
-	if (chunk_empty_ctor(&engine->suf, 8))
+	if (chunk_ctor(&engine->suf, 8))
 		goto free;
 
 	sret = read_mark(engine, engine->pre, engine->kpre, 0, engine->suf);
@@ -586,7 +586,7 @@ engine_init(
 			goto free_engine;
 	}
 
-	if (chunk_empty_ctor(&engine->save, 256))
+	if (chunk_ctor(&engine->save, 256))
 		goto free_engine;
 
 	if (parser_ctor(&engine->parser, states, STATE_MAX))

@@ -49,7 +49,7 @@ typedef struct chunk s_chunk;
 
 /** @brief Create an empty chunk. */
 extern int /** @return 0 on success, -1 on error */
-chunk_empty_ctor(
+chunk_ctor(
 	s_chunk **chunk,	/**< __return__ created chunk */
 	size_t size		/**< initial size */
 	/**< - must satisfy `0 < size <= MAX_SIZE` */

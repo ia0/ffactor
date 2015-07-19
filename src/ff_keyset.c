@@ -52,7 +52,7 @@ struct keyset {
 };
 
 extern int
-keyset_empty_ctor(s_keyset **keyset)
+keyset_ctor(s_keyset **keyset)
 {
 	*keyset = malloc(sizeof(**keyset));
 	if (!*keyset) {
