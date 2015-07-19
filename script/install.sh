@@ -31,14 +31,14 @@ check_install()
   fi
   # Do not remove installed links.
   [ -h "$dst" ] && [ "$(readlink "$dst")" = "$src" ] && return 0
-  if [ -e "$dst" ]
+  if [ -e "$dst" -o -h "$dst" ]
   then
-    if diff "$dst" "$src" >/dev/null
+    if [ -f "$dst" ] && diff "$dst" "$src" >/dev/null
     then
       echo "[1;33m  RM $dst (same content)[m"
       rm "$dst"
     else
-      echo "[1;31mError:[m Install destination exists and has different content"
+      echo "[1;31mError:[m Install destination exists and differs"
       echo "Destination: $dst"
       echo "     Source: $src"
       exit 1

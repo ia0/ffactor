@@ -7,11 +7,13 @@ FF_ENVS += env/99-last
 FF_V := $(V)
 O := 2
 
-include ffactor/mk/common.mk
+ffactor/mk/common.mk:
+	git submodule update --init
+
+-include ffactor/mk/common.mk
 
 $(FF_BIN): ffactor/Makefile
 $(FF_BIN): $(shell find ffactor/src -type f 2>/dev/null)
-	$(FF_DO)[ -e ffactor ] || git submodule update --init
 	$(FF_DO)$(MAKE) -C ffactor \
 	CONFIG=$(abspath .config) \
 	BIN=$(abspath $(FF_BIN)) \
