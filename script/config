@@ -17,41 +17,30 @@
 
 . "$(dirname "$0")/common.sh"
 
-A='B C E O V'
-
-for a in $A
+for a in B C E O V
 do
   eval va=\$$a
   if [ "$va" ]
   then
     [ "$a" = B -o "$a" = C ] ||
     get_$a | grep -F "$va" >/dev/null ||
-    echo "\$(error Bad value $a=$va)"
+    echo "\$(error Bad value FF_$a=$va)"
   else
     va=$(get_$a | head -n1)
     [ "$a" = C -a ! "$va" ] &&
     echo "\$(error No compiler found)"
   fi
-  echo "$a := $va"
-  echo "ifeq (\$($a),)"
-  echo "override $a := $va"
-  echo "endif"
+  echo "FF_$a := \$(or \$(FF_$a),$va)"
   if eval \$cst_$a
   then
-    echo "ifneq (\$($a),$va)"
-    echo "\$(error Cannot override $a=$va with $a=\$($a))"
+    echo "ifneq (\$(FF_$a),$va)"
+    echo "\$(error Cannot override FF_$a=$va with FF_$a=\$(FF_$a))"
+    echo "endif"
+  else
+    echo "ifeq (\$(filter $(echo $(get_$a)),\$(FF_$a)),)"
+    echo "\$(error Bad value FF_$a=\$(FF_$a))"
     echo "endif"
   fi
   unset va
 done
 unset a
-
-sp="\$(info [33m"
-for a in $A
-do
-  echo -n "$sp$a=\$($a)"
-  sp=" "
-done
-unset a
-unset sp
-echo "[m)"

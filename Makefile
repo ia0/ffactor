@@ -16,102 +16,21 @@
 
 .SUFFIXES:
 
-CONFIG := .config
+.PHONY: all
+all:
 
-ifneq ($(shell [ -e "$(CONFIG)" ] && echo y),y)
-$(eval $(shell mkdir -p $(dir $(CONFIG)) && \
-B=$(B) C=$(C) E=$(E) O=$(O) V=$(V) script/config > $(CONFIG) || \
-echo '$$(error Could not make config)'))
-endif
+FF_B := $(B)
+FF_C := $(C)
+FF_E := $(E)
+FF_O := $(O)
+FF_V := $(V)
+include mk/common.mk
+$(info [33mB=$(FF_B) C=$(FF_C) E=$(FF_E) O=$(FF_O) V=$(FF_V)[m)
 
-include $(CONFIG)
-
-CC := $(C)
-SRCS :=
-
-ifeq ($(C),clang)
-CC += -Weverything
-endif
-ifeq ($(C),gcc)
-CC += -std=c11 -D_BSD_SOURCE -Wall -Wextra
-endif
-
-CC += -Wno-padded
-
-ifeq ($(E),y)
-CC += -Werror
-endif
-
-ifeq ($(O),0)
-ifneq ($(shell which valgrind),)
-CC += -DFF_VALGRIND
-SRCS += src/ff_valgrind.c
-endif
-CC += -g -ftrapv
-else
-CC += -O$(O) -DNDEBUG
-CC += -Wno-disabled-macro-expansion
-endif
-
-ifeq ($(V),y)
-DO :=
-PP := @:
-else
-DO := @
-PP := @echo
-endif
-
-SRCS += src/ff_chunk.c
-SRCS += src/ff_cyclic.c
-SRCS += src/ff_keyset.c
-SRCS += src/ff_file.c
-SRCS += src/ff_parser.c
-SRCS += src/ff_eval.c
-SRCS += src/ff_engine.c
-SRCS += src/ffactor.c
-
-OBJS := $(SRCS:src/%.c=$(B)/%.o)
-
-BIN := $(B)/ffactor
-
-$(BIN): $(OBJS)
-	$(PP) "[1;32m  LD $@[m"
-	$(DO)mkdir -p $(dir $@)
-	$(DO)$(CC) $^ -o $@
-
--include $(OBJS:.o=.d)
-
-$(OBJS): $(B)/%.o: src/%.c
-	$(PP) "[32m  CC $@[m"
-	$(DO)mkdir -p $(dir $@)
-	$(DO)$(CC) $(DEFINES) -Isrc -MMD -c $< -o $@
-
-TESTS := $(shell find test -mindepth 1 -maxdepth 1 -type d)
-TESTS := $(patsubst %,$(B)/%/ok,$(TESTS))
-ifneq ($(shell which git),)
-DIFF := git diff --no-index --
-else
-DIFF := diff
-endif
+all: $(FF_BIN)
 
 .PHONY: test
-test: $(TESTS)
-
-$(TESTS): %/ok: $(BIN) %/env %/in %/out.oracle %/err.oracle %/code.oracle
-	$(PP) "[34m  FF $*[m"
-	$(DO)$(BIN) $*/env < $*/in > $*/out 2> $*/err; echo $$? > $*/code
-	$(DO)$(DIFF) $*/err.oracle $*/err
-	$(DO)$(DIFF) $*/out.oracle $*/out
-	$(DO)$(DIFF) $*/code.oracle $*/code
-	$(DO)touch $@
-
-$(B)/test/%: test/%
-	$(DO)mkdir -p $(dir $@)
-	$(DO)cp $< $@
+test: ff_suite
 
 .PHONY: clean
-clean:
-	$(PP) "[1;31m  RM $(B)[m"
-	$(DO)rm -rf $(B)
-	$(PP) "[1;31m  RM $(CONFIG)[m"
-	$(DO)rm -f $(CONFIG)
+clean: ff_clean

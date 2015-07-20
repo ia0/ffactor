@@ -44,7 +44,7 @@ don't have [make](https://en.wikipedia.org/wiki/Make_%28software%29),
 you may still compile the executable using:
 
     cc -std=c99 -D_BSD_SOURCE -Isrc -o ffactor \
-      $(find src -name '*.c' ! -name ff_valgrind.c)
+      $(find src -name 'ff*.c' ! -name ff_valgrind.c)
 
 You may pass the following options to make to configure the build:
 - `B=<directory>`: compilation directory (default: `B=build`)

@@ -1,5 +1,5 @@
-Technical documentation
-=======================
+Implementation documentation
+============================
 
 Coding principles
 -----------------

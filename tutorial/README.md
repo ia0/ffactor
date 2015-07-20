@@ -89,7 +89,7 @@ The last file is the [Makefile](Makefile). It mainly includes a file
 from the *ffactor* repository that does all the job and just wraps of
 its rules by removing the `ff_` prefix. It also gives a rule to build
 the *ffactor* executable. Here are the commands available:
-- `make [all]` expands factored files and copy verbatim files from
+- `make` expands factored files and copy verbatim files from
   `src` to `dst` according to `env`, then it executes
   `dst/script/install` to install the destination files
 - `make pull` synchronizes the repository
@@ -98,7 +98,11 @@ the *ffactor* executable. Here are the commands available:
   which may be a copy or an expansion)
 - `make clean` deletes the destination folder
 
-You may now add it, commit, and push it to some place (like github):
+For more information about the `mk/common.mk` file see
+[mk/README.md](/mk).
+
+You may now add the Makefile, commit, and push your repository to some
+place (like github):
 
     git add Makefile
     git commit -m'initial commit'
