@@ -62,16 +62,17 @@ The next files are [src/bashrc.ffactor](src/bashrc.ffactor) and
 [src/script/install.ffactor](src/script/install.ffactor), which are
 factored source files, since they end with the `.ffactor` file
 extension. Factored files from `src` are expanded to `dst` according
-to the environment files in `env`. See the root readme for more
-information about factored files syntax. You may now add any factored
-files you want (or switch any verbatim file to its factored version):
+to the environment files in `env`. See [/README.md](/README.md) for
+more information about factored files syntax. You may now add any
+factored files you want (or switch any verbatim file to its factored
+version):
 
     git add src/bashrc.ffactor
     git add src/script/install.ffactor
 
 The next files are [env/01-first](env/01-first) and
 [env/99-last](env/99-last). They are environment files shared among
-all machines. See the root readme for more information about
+all machines. See [/README.md](/README.md) for more information about
 environment files syntax. You may now add any shared environment files
 you want:
 
@@ -98,8 +99,8 @@ the *ffactor* executable. Here are the commands available:
   which may be a copy or an expansion)
 - `make clean` deletes the destination folder
 
-For more information about the `mk/common.mk` file see
-[mk/README.md](/mk).
+See [/mk/README.md](/mk/README.md) for more information about
+Makefiles.
 
 You may now add the Makefile, commit, and push your repository to some
 place (like github):
