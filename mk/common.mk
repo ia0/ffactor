@@ -91,7 +91,7 @@ $(FF_OBJS): $(FF_B)/%.o: $(FF_R)/src/%.c
 	$(FF_DO)mkdir -p $(dir $@)
 	$(FF_DO)$(FF_CC) -I$(FF_R)/src -MMD -c $< -o $@
 
-FF_TESTS := $(shell find $(FF_R)/test -mindepth 1 -maxdepth 1 -type d)
+FF_TESTS := $(shell find $(FF_R)/test/suite -mindepth 1 -maxdepth 1 -type d)
 FF_TESTS := $(patsubst $(FF_R)/%,$(FF_B)/%/ok,$(FF_TESTS))
 
 .PHONY: ff_suite
