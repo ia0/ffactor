@@ -98,13 +98,14 @@ FF_TESTS := $(patsubst $(FF_R)/%,$(FF_B)/%/ok,$(FF_TESTS))
 ff_suite: $(FF_TESTS)
 
 $(FF_TESTS): $(FF_B)/%/ok: $(FF_BIN) $(FF_R)/%/env $(FF_R)/%/in \
-		$(FF_R)/%/out.oracle $(FF_R)/%/err.oracle $(FF_R)/%/code.oracle
+		$(FF_R)/%/out $(FF_R)/%/err $(FF_R)/%/code
 	$(FF_PP) "[34m  FF $*[m"
 	$(FF_DO)mkdir -p $(FF_B)/$*
-	$(FF_DO)$(FF_BIN) $(FF_R)/$*/env < $(FF_R)/$*/in > $(FF_B)/$*/out 2> $(FF_B)/$*/err; echo $$? > $(FF_B)/$*/code
-	$(FF_DO)$(FF_DIFF) $(FF_R)/$*/err.oracle $(FF_B)/$*/err
-	$(FF_DO)$(FF_DIFF) $(FF_R)/$*/out.oracle $(FF_B)/$*/out
-	$(FF_DO)$(FF_DIFF) $(FF_R)/$*/code.oracle $(FF_B)/$*/code
+	$(FF_DO)$(FF_BIN) $(FF_R)/$*/env < $(FF_R)/$*/in > $(FF_B)/$*/out \
+		2> $(FF_B)/$*/err; echo $$? > $(FF_B)/$*/code
+	$(FF_DO)$(FF_DIFF) $(FF_R)/$*/err $(FF_B)/$*/err
+	$(FF_DO)$(FF_DIFF) $(FF_R)/$*/out $(FF_B)/$*/out
+	$(FF_DO)$(FF_DIFF) $(FF_R)/$*/code $(FF_B)/$*/code
 	$(FF_DO)touch $@
 
 ifneq ($(or $(FF_D),$(FF_S)),)
