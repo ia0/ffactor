@@ -2,7 +2,7 @@
 #@ffactor2
 #@
 
-. ffactor/script/install.sh
+. "$FF_R/script/install.sh"
 
 check_install bashrc ~/.bashrc
 #@if bin/emacs

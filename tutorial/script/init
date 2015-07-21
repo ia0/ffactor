@@ -1,5 +1,5 @@
 #!/bin/sh
 
-. ffactor/script/init.sh
+. "$FF_R/script/init.sh"
 
 set_bin Editor emacs vim vi

@@ -22,10 +22,10 @@ $(FF_R)/mk/common.mk:
 $(LOCAL_ENV): script/init
 	$(FF_PP) "[34m  GEN $@[m"
 	$(FF_DO)mkdir -p $(dir $@)
-	$(FF_DO)./$< > $@
+	$(FF_DO)FF_R=$(FF_R) ./$< > $@
 
 install: $(FF_DSTS)
-	$(FF_DO)sh $(FF_D)/script/install $(FF_D)
+	$(FF_DO)FF_R=$(FF_R) FF_D=$(FF_D) sh $(FF_D)/script/install
 
 .PHONY: pull
 pull:

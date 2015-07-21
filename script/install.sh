@@ -14,11 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-[ $# -eq 1 ] ||
-{ echo "Usage: make"; exit 1; }
-
-FF_D="$(readlink -f "$1")"
-shift
+FF_D=$(readlink -f "$FF_D")
 
 check_install()
 {
