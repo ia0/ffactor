@@ -31,6 +31,9 @@ all: $(FF_BIN)
 
 .PHONY: test
 test: ff_suite
+ifneq ($(FF_O),0)
+test: ff_bench
+endif
 
 .PHONY: clean
 clean: ff_clean

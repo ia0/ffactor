@@ -44,6 +44,7 @@ FF_CC += -std=c11 -D_BSD_SOURCE -Wall -Wextra
 endif
 
 FF_CC += -Wno-padded
+FF_CC += -Wno-disabled-macro-expansion
 
 ifeq ($(FF_E),y)
 FF_CC += -Werror
@@ -57,7 +58,6 @@ endif
 FF_CC += -g -ftrapv
 else
 FF_CC += -O$(FF_O) -DNDEBUG
-FF_CC += -Wno-disabled-macro-expansion
 endif
 
 ifeq ($(FF_V),y)
@@ -91,21 +91,39 @@ $(FF_OBJS): $(FF_B)/%.o: $(FF_R)/src/%.c
 	$(FF_DO)mkdir -p $(dir $@)
 	$(FF_DO)$(FF_CC) -I$(FF_R)/src -MMD -c $< -o $@
 
-FF_TESTS := $(shell find $(FF_R)/test/suite -mindepth 1 -maxdepth 1 -type d)
-FF_TESTS := $(patsubst $(FF_R)/%,$(FF_B)/%/ok,$(FF_TESTS))
+FF_GET_TESTS = $(patsubst $(FF_R)/%,$(FF_B)/%/ok,$(shell find $(FF_R)/test/$(1) -mindepth 1 -maxdepth 1 -type d))
+
+FF_SUITES := $(call FF_GET_TESTS,suite)
 
 .PHONY: ff_suite
-ff_suite: $(FF_TESTS)
+ff_suite: $(FF_SUITES)
 
-$(FF_TESTS): $(FF_B)/%/ok: $(FF_BIN) $(FF_R)/%/env $(FF_R)/%/in \
+$(FF_SUITES): $(FF_B)/%/ok: $(FF_BIN) $(FF_R)/%/env $(FF_R)/%/in \
 		$(FF_R)/%/out $(FF_R)/%/err $(FF_R)/%/code
-	$(FF_PP) "[34m  FF $*[m"
+	$(FF_PP) "[34m  TS $*[m"
 	$(FF_DO)mkdir -p $(FF_B)/$*
 	$(FF_DO)$(FF_BIN) $(FF_R)/$*/env < $(FF_R)/$*/in > $(FF_B)/$*/out \
 		2> $(FF_B)/$*/err; echo $$? > $(FF_B)/$*/code
 	$(FF_DO)$(FF_DIFF) $(FF_R)/$*/err $(FF_B)/$*/err
 	$(FF_DO)$(FF_DIFF) $(FF_R)/$*/out $(FF_B)/$*/out
 	$(FF_DO)$(FF_DIFF) $(FF_R)/$*/code $(FF_B)/$*/code
+	$(FF_DO)touch $@
+
+FF_BENCHS := $(call FF_GET_TESTS,bench)
+FF_BENCH_REF := $(FF_B)/test/bench/ref
+
+$(FF_BENCH_REF): $(FF_R)/test/bench/ref.c
+	$(FF_DO)mkdir -p $(dir $@)
+	$(FF_DO)$(FF_CC) $< -o $@
+
+.PHONY: ff_bench
+ff_bench: $(FF_BENCHS)
+
+$(FF_BENCHS): $(FF_B)/%/ok: $(FF_BIN) $(FF_BENCH_REF) $(FF_R)/test/bench/test.sh $(FF_R)/%/prepare.sh
+	$(FF_PP) "[34m  TB $*[m"
+	$(FF_DO)mkdir -p $(FF_B)/$*
+	$(FF_DO)FF_B=$(FF_B)/$* FF_R=$(FF_R)/$* FF_BIN=$(FF_BIN) FF_DIFF="$(FF_DIFF)" \
+		FF_BENCH_REF=$(FF_BENCH_REF) sh $(FF_R)/test/bench/test.sh
 	$(FF_DO)touch $@
 
 ifneq ($(or $(FF_D),$(FF_S)),)
