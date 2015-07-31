@@ -30,10 +30,7 @@ $(info [33mB=$(FF_B) C=$(FF_C) E=$(FF_E) O=$(FF_O) V=$(FF_V)[m)
 all: $(FF_BIN)
 
 .PHONY: test
-test: ff_suite
-ifneq ($(FF_O),0)
-test: ff_bench
-endif
+test: ff_suite ff_bench
 
 .PHONY: clean
 clean: ff_clean

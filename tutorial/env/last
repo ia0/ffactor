@@ -4,14 +4,12 @@
 - The 'error' command can be used inside an 'if' command to ensure
 - that some condition holds.
 
-if (not (or bin/emacs bin/vim bin/vi))
-error At least one editor should be set!
+if (not true)
+error true is false!
+elif false
+error false is true!
 endif
 
-- We can also write it like the following:
-if (not bin/emacs)
-elif (not bin/vim)
-elif (not bin/vi)
-else
-error No editor available!
+if (not (or bin/emacs bin/vim bin/vi))
+error At least one editor should be set!
 endif

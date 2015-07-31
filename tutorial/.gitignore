@@ -2,4 +2,4 @@
 /bin/ffactor
 /build/
 /dst/
-/env/50-local
+/env/*.gen

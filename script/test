@@ -27,7 +27,7 @@ do
       do
         make clean
         make -j C=$C E=$E O=$O V=$V &&
-        make -j test ||
+        make -j ff_suite ||
         exit 1
       done
     done

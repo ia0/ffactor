@@ -2,8 +2,8 @@
 #@ffactor2
 #@
 
-#@- This comment is absent from expanded files.
-# This comments stays in expanded files.
+#@- This comment is absent from expanded file.
+# This comment is present in the expanded file.
 #@- Commands start with #@ and ends with a line-feed. See the
 #@- README.md at the root of the ffactor repository for more
 #@- information.

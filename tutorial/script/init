@@ -3,3 +3,4 @@
 . "$FF_R/script/init.sh"
 
 set_bin Editor emacs vim vi
+set_bin Shell zsh bash

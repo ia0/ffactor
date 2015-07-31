@@ -4,7 +4,9 @@
 
 . "$FF_R/script/install.sh"
 
+#@if bin/bash
 check_install bashrc ~/.bashrc
+#@endif
 #@if bin/emacs
 check_install emacs ~/.emacs
 #@endif

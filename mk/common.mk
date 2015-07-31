@@ -168,4 +168,4 @@ $(FF_DSTOKS): %.ok:
 .PHONY: ff_clean
 ff_clean:
 	$(FF_PP) "[1;31m  CLEAN[m"
-	$(FF_DO)rm -rf $(FF_BIN) $(FF_CONFIG) $(FF_DSTS) $(FF_B) $(FF_D)
+	$(FF_DO)rm -rf $(FF_BIN) $(FF_CONFIG) $(FF_DSTS) $(addsuffix .gen,$(FF_DSTS)) $(FF_B) $(FF_D)

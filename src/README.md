@@ -48,8 +48,8 @@ function:
 
 When calling this function, the caller gains ownership on the result,
 gives its ownership on the first operand, and borrows for the time of
-the call its ownership on the second operand. This permits the called
-function to reuse the first operand to store the result.
+the call its ownership on the second operand. The called function can
+thus reuse the first operand to store the result.
 
 The return pointers are double pointers because the inner type may be
 abstract and the caller may not call sizeof to allocate the correct
