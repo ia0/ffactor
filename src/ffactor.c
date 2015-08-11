@@ -29,39 +29,46 @@
 int
 main(int argc, char *argv[])
 {
-	s_keyset *env;
+	s_keyset *env = NULL;
+	int ret = 1;
 
 #ifdef FF_VALGRIND
 	if (valgrind_bootstrap(&argc, &argv, "--no-valgrind")) {
 		warnx("Could not bootstrap under valgrind");
-		return 1;
+		goto free;
 	}
 #endif
 
 	if (argc == 2 && !strcmp("--help", argv[1])) {
 		printf("Usage: %s [<env>..] [-- <src> <dst>]\n", argv[0]);
-		return 0;
+		ret = 0;
+		goto free;
 	}
 
 	if (keyset_ctor(&env))
-		return 1;
+		goto free;
 
 	for (int i = 1; i < argc; i++) {
 		if (!strcmp("--", argv[i])) {
 			if (i + 3 != argc) {
 				warnx("Bad command line");
-				return 1;
+				goto free;
 			}
 			if (engine_file(env, argv[i + 1], argv[i + 2]))
-				return 1;
-			return 0;
+				goto free;
+			ret = 0;
+			goto free;
 		}
 		if (engine_env(env, argv[i]))
-			return 1;
+			goto free;
 	}
 
 	if (engine_std(env))
-		return 1;
+		goto free;
 
-	return 0;
+	ret = 0;
+
+free:
+	keyset_dtor(env);
+	return ret;
 }
