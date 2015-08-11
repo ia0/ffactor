@@ -18,7 +18,7 @@
 
 #include <string.h> /* strcmp */
 #include <stdio.h> /* printf */
-#include <err.h> /* warn, warnx */
+#include <err.h> /* warnx */
 
 #ifdef FF_VALGRIND
 # include <ff_valgrind.h>
@@ -33,7 +33,7 @@ main(int argc, char *argv[])
 
 #ifdef FF_VALGRIND
 	if (valgrind_bootstrap(&argc, &argv, "--no-valgrind")) {
-		warn("Could not bootstrap under valgrind");
+		warnx("Could not bootstrap under valgrind");
 		return 1;
 	}
 #endif
