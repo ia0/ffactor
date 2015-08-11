@@ -18,7 +18,7 @@
 
 #include <assert.h> /* assert */
 #include <unistd.h> /* execvp, readlink */
-#include <stdlib.h> /* free, malloc */
+#include <stdlib.h> /* calloc, free, malloc */
 #include <string.h> /* memcpy, strcmp, strdup */
 #include <err.h> /* warn */
 
@@ -72,34 +72,46 @@ valgrind_bootstrap(int *pargc, char ***pargv, const char *valopt)
 	}
 
 	/* Boostrap with valgrind */
-	size_t targc = (size_t)*pargc + 1U;
+	const char *valgrind[] = { "valgrind", "-q", "--leak-check=yes" };
+	const size_t valsize = sizeof(valgrind) / sizeof(valgrind[0]);
+	const size_t targc = (size_t)*pargc + 1U;
 	char **argv, *path;
+	size_t cur;
 
-	argv = malloc((targc + 4U) * sizeof(*argv));
+	argv = calloc(valsize + 2U + targc, sizeof(*argv));
 	if (!argv) {
 		warn("malloc()");
 		return -1;
 	}
 
 	if (get_self_path(&path) < 0)
-		goto free_argv;
+		goto free;
 
-	argv[0] = (char[]){ "valgrind" };
-	argv[1] = (char[]){ "-q" };
-	argv[2] = path;
-	argv[3] = strdup(valopt);
-	if (!argv[3])
-		goto free_path;
-	memcpy(&argv[4], &(*pargv)[0], targc * sizeof(char *));
-	assert(argv[targc + 3U] == NULL);
+	for (cur = 0; cur < valsize; cur++) {
+		argv[cur] = strdup(valgrind[cur]);
+		if (!argv[cur])
+			goto free;
+	}
+
+	argv[cur] = path;
+	cur++;
+
+	argv[cur] = strdup(valopt);
+	if (!argv[cur])
+		goto free;
+	cur++;
+
+	memcpy(&argv[cur], &(*pargv)[0], targc * sizeof(char *));
+	assert(argv[valsize + 1U + targc] == NULL);
 
 	execvp(argv[0], argv);
 	warn("execvp()");
 	free(argv[3]);
 
-free_path:
+free:
 	free(path);
-free_argv:
+	for (cur = 0; cur < valsize + 2U + targc; cur++)
+		free(argv[cur]);
 	free(argv);
 	return -1;
 }
