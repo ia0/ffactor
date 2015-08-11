@@ -117,7 +117,10 @@ $(FF_BENCH_REF): $(FF_R)/test/bench/ref.c
 	$(FF_DO)$(FF_CC) $< -o $@
 
 .PHONY: ff_bench
+ff_bench:
+ifneq ($(FF_O),0)
 ff_bench: $(FF_BENCHS)
+endif
 
 $(FF_BENCHS): $(FF_B)/%/ok: $(FF_BIN) $(FF_BENCH_REF) $(FF_R)/test/bench/test.sh $(FF_R)/%/prepare.sh
 	$(FF_PP) "[34m  TB $*[m"
