@@ -75,7 +75,7 @@ valgrind_bootstrap(int *pargc, char ***pargv, const char *valopt)
 	const char *valgrind[] = { "valgrind", "-q", "--leak-check=yes" };
 	const size_t valsize = sizeof(valgrind) / sizeof(valgrind[0]);
 	const size_t targc = (size_t)*pargc + 1U;
-	char **argv, *path;
+	char **argv;
 	size_t cur;
 
 	argv = calloc(valsize + 2U + targc, sizeof(*argv));
@@ -84,16 +84,14 @@ valgrind_bootstrap(int *pargc, char ***pargv, const char *valopt)
 		return -1;
 	}
 
-	if (get_self_path(&path) < 0)
-		goto free;
-
 	for (cur = 0; cur < valsize; cur++) {
 		argv[cur] = strdup(valgrind[cur]);
 		if (!argv[cur])
 			goto free;
 	}
 
-	argv[cur] = path;
+	if (get_self_path(&argv[cur]) < 0)
+		goto free;
 	cur++;
 
 	argv[cur] = strdup(valopt);
@@ -101,17 +99,16 @@ valgrind_bootstrap(int *pargc, char ***pargv, const char *valopt)
 		goto free;
 	cur++;
 
+	assert(cur == valsize + 2U);
 	memcpy(&argv[cur], &(*pargv)[0], targc * sizeof(char *));
-	assert(argv[valsize + 1U + targc] == NULL);
+	assert(argv[cur + targc - 1U] == NULL);
 
 	execvp(argv[0], argv);
 	warn("execvp()");
-	free(argv[3]);
 
 free:
-	free(path);
-	for (cur = 0; cur < valsize + 2U + targc; cur++)
-		free(argv[cur]);
+	while (cur)
+		free(argv[--cur]);
 	free(argv);
 	return -1;
 }
