@@ -1,24 +1,16 @@
-#include <assert.h>
 #include <stdio.h>
+#include <err.h>
 
 int main(void)
 {
 	char buf;
 
-	while (fread(&buf, 1, 1, stdin) > 0) {
-		assert(!feof(stdin));
-		assert(!ferror(stdin));
+	while (fread(&buf, 1, 1, stdin) == 1)
+		if (fwrite(&buf, 1, 1, stdout) != 1)
+			errx(1, "Write error");
 
-		if (fwrite(&buf, 1, 1, stdout) != 1) {
-			assert(ferror(stdout));
-			return 1;
-		}
-		assert(!feof(stdout));
-		assert(!ferror(stdout));
-	}
 	if (ferror(stdin))
-		return 1;
-	assert(feof(stdin));
+		errx(1, "Read error");
 
 	return 0;
 }

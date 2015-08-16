@@ -3,10 +3,17 @@ set -e
 
 . "$FF_R/prepare.sh"
 
-ref=$(time -f'%U %M' "$FF_BENCH_REF" 1 < "$FF_B/in" 2>&1 > "$FF_B/tmp")
+measure() {
+  local r
+  r=$(time --quiet -f'%U %M' "$1" < "$FF_B/in" 2>&1 > "$FF_B/tmp") ||
+  { echo "$r" | head -n-1 >&2; exit 1; }
+  echo "$r"
+}
+
+ref=$(measure "$FF_BENCH_REF")
 $FF_DIFF "$FF_B/in" "$FF_B/tmp"
 
-cur=$(time -f'%U %M' "$FF_BIN" < "$FF_B/in" 2>&1 > "$FF_B/tmp")
+cur=$(measure "$FF_BIN")
 $FF_DIFF "$FF_B/out" "$FF_B/tmp"
 
 get_tim() {
