@@ -20,26 +20,37 @@ valid_key()
   [ -z "$(echo -n "$1" | head -c1 | tr -d 'A-Za-z')" ]
 }
 
-set_bin()
+set_cat()
 {
-  local i
+  local i t
   echo "- $1"
   echo -n "$1:" >&2
-  shift
-  for i in "$@"
+  while read i t
   do
-    if ! valid_key "$i"
+    if ! valid_key "$2$i"
     then
       echo -n " [33m$i[m" >&2
       continue
     fi
-    if which "$i" >/dev/null
+    if $t >/dev/null
     then
-      echo "set bin/$i"
+      echo "set $2$i"
       echo -n " [32m$i[m" >&2
     else
       echo -n " [31m$i[m" >&2
     fi
   done
   echo >&2
+}
+
+set_bin()
+{
+  local i n
+  n="$1"
+  shift
+  for i in "$@"
+  do
+    echo "$i which $i"
+  done |
+  set_cat "$n" bin/
 }
