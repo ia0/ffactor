@@ -43,6 +43,7 @@ ifeq ($(FF_C),gcc)
 FF_CC += -std=c11 -D_BSD_SOURCE -Wall -Wextra
 endif
 
+FF_CC += -Wno-cast-qual
 FF_CC += -Wno-padded
 FF_CC += -Wno-disabled-macro-expansion
 
