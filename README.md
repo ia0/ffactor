@@ -42,7 +42,7 @@ A simple `make` will build the executable in `bin/ffactor`. If you
 don't have [make](https://en.wikipedia.org/wiki/Make_%28software%29),
 you may still compile the executable using:
 
-    cc -std=c99 -D_BSD_SOURCE -Isrc -o ffactor \
+    cc -std=c99 -D_DEFAULT_SOURCE -Isrc -o ffactor \
       $(find src -name 'ff*.c' ! -name ff_valgrind.c)
 
 You may pass the following options to make to configure the build:

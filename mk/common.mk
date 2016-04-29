@@ -40,7 +40,7 @@ ifeq ($(FF_C),clang)
 FF_CC += -Weverything
 endif
 ifeq ($(FF_C),gcc)
-FF_CC += -std=c11 -D_BSD_SOURCE -Wall -Wextra
+FF_CC += -std=c11 -D_DEFAULT_SOURCE -Wall -Wextra
 endif
 
 FF_CC += -Wno-cast-qual
