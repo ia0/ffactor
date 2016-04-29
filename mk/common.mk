@@ -18,7 +18,7 @@ FF_R := $(or $(FF_R),.)
 FF_BIN := $(or $(FF_BIN),bin/ffactor)
 FF_CONFIG := $(or $(FF_CONFIG),.config)
 ifeq ($(FF_DIFF),)
-ifneq ($(shell which git),)
+ifneq ($(shell which git 2>/dev/null),)
 FF_DIFF := git diff --no-index --
 else
 FF_DIFF := diff
@@ -52,7 +52,7 @@ FF_CC += -Werror
 endif
 
 ifeq ($(FF_O),0)
-ifneq ($(shell which valgrind),)
+ifneq ($(shell which valgrind 2>/dev/null),)
 FF_CC += -DFF_VALGRIND
 FF_SRCS += $(FF_R)/src/ff_valgrind.c
 endif

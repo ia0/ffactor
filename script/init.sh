@@ -32,7 +32,7 @@ set_cat()
       echo -n " [33m$i[m" >&2
       continue
     fi
-    if $t >/dev/null
+    if $t 2>/dev/null >/dev/null
     then
       echo "set $2$i"
       echo -n " [32m$i[m" >&2
