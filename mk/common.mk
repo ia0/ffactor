@@ -40,12 +40,15 @@ ifeq ($(FF_C),clang)
 FF_CC += -Weverything
 endif
 ifeq ($(FF_C),gcc)
-FF_CC += -std=c11 -D_DEFAULT_SOURCE -Wall -Wextra
+FF_CC += -Wall -Wextra
 endif
 
+FF_CC += -std=c11
+FF_CC += -D_DEFAULT_SOURCE
 FF_CC += -Wno-cast-qual
 FF_CC += -Wno-padded
 FF_CC += -Wno-disabled-macro-expansion
+FF_CC += -Wno-declaration-after-statement
 
 ifeq ($(FF_E),y)
 FF_CC += -Werror
