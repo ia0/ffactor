@@ -49,6 +49,7 @@ FF_CC += -Wno-cast-qual
 FF_CC += -Wno-padded
 FF_CC += -Wno-disabled-macro-expansion
 FF_CC += -Wno-declaration-after-statement
+FF_CC += -Wno-unsafe-buffer-usage
 
 ifeq ($(FF_E),y)
 FF_CC += -Werror
